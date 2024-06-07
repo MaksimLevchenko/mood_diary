@@ -94,7 +94,7 @@ class TabSlider extends StatelessWidget {
           height: 12,
           width: 12,
         ),
-        SizedBox(width: 6),
+        const SizedBox(width: 6),
         Text(
           name,
           style: GoogleFonts.nunito(

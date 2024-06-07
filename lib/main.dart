@@ -7,19 +7,18 @@ import 'screens/calendar/calendar_screen.dart';
 import 'screens/main_screen/main_screen.dart';
 
 void main() {
-  runApp(MainApp());
+  runApp(const MainApp());
 }
 
 class MainApp extends StatelessWidget {
-  MainApp({super.key});
-
-  Stream<DateTime> dateTimeNow =
-      Stream<DateTime>.periodic(Duration(seconds: 10), (_) {
-    return DateTime.now();
-  });
+  const MainApp({super.key});
 
   @override
   Widget build(BuildContext context) {
+    Stream<DateTime> dateTimeNow =
+        Stream<DateTime>.periodic(const Duration(seconds: 10), (_) {
+      return DateTime.now();
+    });
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(

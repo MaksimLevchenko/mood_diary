@@ -84,7 +84,7 @@ class _MainScreenState extends State<MainScreen> {
       buttonNames: tabsNames,
       selectedTab: selectedTab,
       radius: BorderRadius.circular(47),
-      toggleSize: Size(288, 30),
+      toggleSize: const Size(288, 30),
       onTap: onToggleTap,
       selectedFillColor: AppColors.tangerine,
       unselectedFillColor: AppColors.gray4,
