@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:mood_diary/app_style/colors.dart';
 import 'package:mood_diary/app_style/images.dart';
 import 'package:mood_diary/app_style/utils.dart';
-import 'package:mood_diary/models/person_mood.dart';
 import 'package:mood_diary/screens/main_screen/tabs/mood_diary.dart';
 import 'package:mood_diary/screens/main_screen/tabs/statistic.dart';
 import 'package:mood_diary/widgets/tab_slider.dart';
@@ -73,7 +72,7 @@ class _MainScreenState extends State<MainScreen> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(children: [
-          Center(child: chooseTabWidget()),
+          Center(child: tabSelectWidget()),
           const SizedBox(height: 36),
           selectedTab == 0 ? MoodDiaryTab() : StatisticTab(),
         ]),
@@ -81,7 +80,7 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  Widget chooseTabWidget({GlobalKey? key}) {
+  Widget tabSelectWidget({GlobalKey? key}) {
     return TabSlider(
       buttonIcons: tabsIcons,
       buttonNames: tabsNames,
