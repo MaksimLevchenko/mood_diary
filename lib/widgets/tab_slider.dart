@@ -33,7 +33,7 @@ class TabSlider extends StatelessWidget {
         clipBehavior: Clip.hardEdge,
         decoration:
             BoxDecoration(borderRadius: radius, color: unselectedFillColor),
-        constraints: BoxConstraints.tight(toggleSize),
+        constraints: BoxConstraints.loose(toggleSize),
         child: Stack(
           children: [
             selectedTab == 1 ? leftButton() : rightButton(),
