@@ -16,9 +16,10 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Stream<DateTime> dateTimeNow =
-        Stream<DateTime>.periodic(const Duration(seconds: 10), (_) {
+        Stream<DateTime>.periodic(const Duration(seconds: 1), (_) {
       return DateTime.now();
     });
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
