@@ -52,6 +52,13 @@ class PersonMood extends ChangeNotifier {
     notifyListeners();
   }
 
+  int? _pickedEmotionIndex;
+  int? get pickedEmotionIndex => _pickedEmotionIndex;
+  set pickedEmotionIndex(int? value) {
+    _pickedEmotionIndex = value;
+    notifyListeners();
+  }
+
   Double? stressLevel;
 
   double? selfAssessment;
