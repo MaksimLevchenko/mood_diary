@@ -14,7 +14,7 @@ class MainApp extends StatelessWidget {
   MainApp({super.key});
 
   Stream<DateTime> dateTimeNow =
-      Stream<DateTime>.periodic(Duration(minutes: 1), (_) {
+      Stream<DateTime>.periodic(Duration(seconds: 10), (_) {
     return DateTime.now();
   });
 
