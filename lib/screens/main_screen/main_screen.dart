@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:mood_diary/app_style/colors.dart';
 import 'package:mood_diary/app_style/images.dart';
+import 'package:mood_diary/app_style/utils.dart';
+import 'package:mood_diary/models/person_mood.dart';
 import 'package:mood_diary/screens/main_screen/tabs/mood_diary.dart';
 import 'package:mood_diary/screens/main_screen/tabs/statistic.dart';
 import 'package:mood_diary/widgets/tab_slider.dart';
@@ -16,16 +18,15 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  GlobalKey tabBarKey = GlobalKey();
   List<String> tabsNames = [
     'Дневник настроения',
     'Статистика',
   ];
-
   List<String> tabsIcons = [
     AppImages.diaryIconPath,
     AppImages.statisticIconPath,
   ];
-
   int selectedTab = 0;
 
   String _getCurrentFormattedDate() {
@@ -64,33 +65,37 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: _titleClock(),
-          centerTitle: true,
-          actions: [calendarButton()],
-          toolbarHeight: 48 + kToolbarHeight,
-        ),
-        body: ListView(
-          children: [
-            chooseTabWidget(),
-          ],
-        ));
+      appBar: AppBar(
+        title: _titleClock(),
+        centerTitle: true,
+        actions: [calendarButton()],
+        toolbarHeight: 48 + kToolbarHeight,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(children: [
+          Center(child: chooseTabWidget()),
+          const SizedBox(height: 36),
+          selectedTab == 0 ? MoodDiaryTab() : StatisticTab(),
+        ]),
+      ),
+    );
   }
 
-  Center chooseTabWidget() {
-    return Center(
-        child: TabSlider(
+  Widget chooseTabWidget({GlobalKey? key}) {
+    return TabSlider(
       buttonIcons: tabsIcons,
       buttonNames: tabsNames,
       selectedTab: selectedTab,
-      radius: BorderRadius.circular(47),
-      toggleSize: const Size(288, 30),
+      radius: BorderRadius.circular(Sizes.tabBarRadius),
+      toggleSize: Sizes.toggleSize,
       onTap: onToggleTap,
       selectedFillColor: AppColors.tangerine,
       unselectedFillColor: AppColors.gray4,
       selectedTextColor: Colors.white,
       unselectedTextColor: AppColors.gray2,
-    ));
+      key: key,
+    );
   }
 
   void onToggleTap(index) {
