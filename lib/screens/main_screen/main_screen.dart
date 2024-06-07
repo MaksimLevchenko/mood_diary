@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:mood_diary/app_style/colors.dart';
 import 'package:mood_diary/app_style/images.dart';
+import 'package:mood_diary/screens/main_screen/tabs/mood_diary.dart';
+import 'package:mood_diary/screens/main_screen/tabs/statistic.dart';
+import 'package:mood_diary/widgets/tab_slider.dart';
+import 'package:provider/provider.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -11,36 +16,23 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int pickedTab = 1;
+  List<String> tabsNames = [
+    'Дневник настроения',
+    'Статистика',
+  ];
+
+  List<String> tabsIcons = [
+    AppImages.diaryIconPath,
+    AppImages.statisticIconPath,
+  ];
+
+  int selectedTab = 0;
 
   String _getCurrentFormattedDate() {
-    DateTime currentDate = DateTime.now();
-    DateFormat formatter = DateFormat('d MMMM H:m');
+    DateTime currentDate = Provider.of<DateTime>(context);
+    DateFormat formatter = DateFormat('d MMMM HH:mm');
     String formattedDate = formatter.format(currentDate);
     return formattedDate;
-  }
-
-  void _goToCalendar() {
-    return;
-  }
-
-  Widget tabSlider() {
-    return Placeholder();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: titleClock(),
-          centerTitle: true,
-          actions: [calendarButton()],
-        ),
-        body: ListView(
-          children: [
-            tabSlider(),
-          ],
-        ));
   }
 
   IconButton calendarButton() {
@@ -49,14 +41,60 @@ class _MainScreenState extends State<MainScreen> {
       icon: Image.asset(
         AppImages.calendarIconPath,
         color: AppColors.gray2,
+        width: 24,
+        height: 24,
       ),
     );
   }
 
-  Text titleClock() {
+  Text _titleClock() {
     return Text(
       _getCurrentFormattedDate(),
-      style: TextStyle(color: AppColors.gray2),
+      style: GoogleFonts.nunito(
+        color: AppColors.gray2,
+        fontWeight: FontWeight.w700,
+      ),
     );
+  }
+
+  void _goToCalendar() {
+    return;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: _titleClock(),
+          centerTitle: true,
+          actions: [calendarButton()],
+          toolbarHeight: 48 + kToolbarHeight,
+        ),
+        body: ListView(
+          children: [
+            chooseTabWidget(),
+          ],
+        ));
+  }
+
+  Center chooseTabWidget() {
+    return Center(
+        child: TabSlider(
+      buttonIcons: tabsIcons,
+      buttonNames: tabsNames,
+      selectedTab: selectedTab,
+      radius: BorderRadius.circular(47),
+      toggleSize: Size(288, 30),
+      onTap: onToggleTap,
+      selectedFillColor: AppColors.tangerine,
+      unselectedFillColor: AppColors.gray4,
+      selectedTextColor: Colors.white,
+      unselectedTextColor: AppColors.gray2,
+    ));
+  }
+
+  void onToggleTap(index) {
+    selectedTab = index;
+    setState(() {});
   }
 }
