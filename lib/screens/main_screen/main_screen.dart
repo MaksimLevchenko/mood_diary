@@ -69,7 +69,6 @@ class _MainScreenState extends State<MainScreen> {
         title: _titleClock(),
         centerTitle: true,
         actions: [calendarButton()],
-        toolbarHeight: 48 + kToolbarHeight,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),

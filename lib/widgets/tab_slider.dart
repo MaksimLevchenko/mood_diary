@@ -49,9 +49,8 @@ class TabSlider extends StatelessWidget {
     );
   }
 
-  InkWell standartButton(int buttonIndex) {
-    return InkWell(
-      borderRadius: radius,
+  GestureDetector standartButton(int buttonIndex) {
+    return GestureDetector(
       onTap: () => onTap(buttonIndex),
       child: Container(
         decoration: BoxDecoration(
