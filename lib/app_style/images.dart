@@ -7,4 +7,6 @@ class AppImages {
   static String powerImagePath = 'assets/images/moods/power.png';
 
   static String calendarIconPath = 'assets/icons/my_sessions.png';
+  static String diaryIconPath = 'assets/icons/diary.png';
+  static String statisticIconPath = 'assets/icons/statistic.png';
 }
