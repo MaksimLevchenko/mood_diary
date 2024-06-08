@@ -4,6 +4,7 @@ import 'package:mood_diary/app_style/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:mood_diary/app_style/images.dart';
 import 'package:mood_diary/app_style/utils.dart';
+import 'package:provider/provider.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
@@ -14,11 +15,13 @@ class CalendarScreen extends StatefulWidget {
 
 class _CalendarScreenState extends State<CalendarScreen> {
   bool isMonthesTab = true;
+  SearchableDate searchableDate = SearchableDate();
 
-  void toggleTab() {
+  void toggleTab(DateTime date) {
     setState(() {
       isMonthesTab = !isMonthesTab;
     });
+    searchableDate.date = date;
   }
 
   @override
@@ -26,11 +29,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
     CalendarBuilder pageBuilder = isMonthesTab
         ? MonthesBuilder(toggleTab: toggleTab)
         : YearBuilder(toggleTab: toggleTab);
-    return Scaffold(
-      appBar: appBar(context, pageBuilder),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: pageBuilder,
+    return ListenableProvider(
+      create: (context) => searchableDate,
+      child: Scaffold(
+        appBar: appBar(context, pageBuilder),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: pageBuilder,
+        ),
       ),
     );
   }
@@ -81,7 +87,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
 class CalendarBuilder extends StatelessWidget {
   final nowTime = DateTime.now();
-  final void Function() toggleTab;
+  final void Function(DateTime) toggleTab;
   CalendarBuilder({super.key, required this.toggleTab});
 
   Text monthTextTemplate(
@@ -166,14 +172,20 @@ class MonthesBuilder extends CalendarBuilder {
     );
   }
 
+  Widget gapBetweenMonthes() {
+    return SliverList(
+        delegate: SliverChildListDelegate(
+            [const SizedBox(height: Sizes.calendarGapBetweenSmallMonthes)]));
+  }
+
   Widget reverseMonthesList() {
     return SliverList(
       delegate: SliverChildBuilderDelegate((context, index) {
         DateTime givenMonth = DateTime(nowTime.year, nowTime.month - index - 1);
         return Column(
           children: [
-            oneMonthWithTextBuilder(context, givenMonth),
             const SizedBox(height: Sizes.calendarHeightBetweenBigMonthes),
+            oneMonthWithTextBuilder(context, givenMonth),
           ],
         );
       }),
@@ -186,12 +198,11 @@ class MonthesBuilder extends CalendarBuilder {
       selectedDay = nowTime;
     }
     var firstWeekDay = getFirstDayOfMonthWeekday(givenMonth) - 1;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         GestureDetector(
-          onTap: goToGivenYear,
+          onTap: () => goToGivenYear(givenMonth),
           child: yearText(givenMonth),
         ),
         monthText(givenMonth),
@@ -210,8 +221,88 @@ class MonthesBuilder extends CalendarBuilder {
         .yearTextTemplate(givenMonth, 16, FontWeight.w700, AppColors.gray2);
   }
 
-  void goToGivenYear() {
-    toggleTab();
+  void goToGivenYear(DateTime date) {
+    toggleTab(date);
+  }
+
+  int getMonthSizeBetweenDates(DateTime initialDate, DateTime endDate) {
+    return calculateMonthSize(endDate) - calculateMonthSize(initialDate);
+  }
+
+  int calculateMonthSize(DateTime dateTime) {
+    return dateTime.year * 12 + dateTime.month;
+  }
+
+  double getNewOffset(DateTime givenMonth) {
+    int monthsBetween = getMonthSizeBetweenDates(DateTime.now(), givenMonth);
+    int bigMonthsBetween = 0;
+    int smallMonthsBetween = 0;
+    DateTime month = DateTime.now();
+    for (int i = 0; i < monthsBetween.abs(); i++) {
+      print(month.month);
+      int weekDay = getFirstDayOfMonthWeekday(month);
+      int daysInMonth = getDaysInMonth(month);
+      if (((getFirstDayOfMonthWeekday(month) == 7 &&
+                  getDaysInMonth(month) == 30) ||
+              (getDaysInMonth(month) == 31 &&
+                  getFirstDayOfMonthWeekday(month) > 5)) &&
+          (month.month != 2)) {
+        bigMonthsBetween += monthsBetween.isNegative ? -1 : 1;
+      }
+      if (month.month == 2 && weekDay == 1 && month.year % 4 != 0) {
+        smallMonthsBetween += monthsBetween.isNegative ? -1 : 1;
+      }
+      int nextMonth = month.month + 1 * (monthsBetween.isNegative ? -1 : 1);
+      month = DateTime(
+          month.year,
+          nextMonth == 13
+              ? 1
+              : nextMonth == 0
+                  ? 12
+                  : nextMonth);
+    }
+    print('month: ${month.month}');
+
+    const double monthSize = 350.34;
+    double additionalOffset = 0;
+    final double bigMonthSize = 403.34;
+    const double smallMonthSize = 322.34;
+    if (monthsBetween >= 0) {
+      DateTime currMonth = DateTime(givenMonth.year, givenMonth.month);
+      if (((getFirstDayOfMonthWeekday(currMonth) == 7 &&
+                  getDaysInMonth(currMonth) == 30) ||
+              (getDaysInMonth(currMonth) == 31 &&
+                  getFirstDayOfMonthWeekday(currMonth) > 5)) &&
+          (month.month != 2)) {
+        print('bad month: ${givenMonth.month}');
+      }
+      if (getFirstDayOfMonthWeekday(givenMonth) == 1 &&
+          month.month == 2 &&
+          month.year % 4 != 0) {
+        smallMonthsBetween -= 1;
+      }
+    } else {
+      DateTime currMonth = DateTime(givenMonth.year, givenMonth.month);
+      if (((getFirstDayOfMonthWeekday(currMonth) == 7 &&
+                  getDaysInMonth(currMonth) == 30) ||
+              (getDaysInMonth(currMonth) == 31 &&
+                  getFirstDayOfMonthWeekday(currMonth) > 5)) &&
+          (month.month != 2)) {
+        bigMonthsBetween -= 1;
+        print('bad month: ${givenMonth.month}');
+      }
+      if (getFirstDayOfMonthWeekday(givenMonth) == 1 &&
+          month.month == 2 &&
+          month.year % 4 != 0) {
+        smallMonthsBetween -= 1;
+      }
+      additionalOffset += -Sizes.calendarHeightBetweenBigMonthes;
+    }
+    final double offset = bigMonthsBetween * bigMonthSize +
+        smallMonthsBetween * smallMonthSize +
+        (monthsBetween - bigMonthsBetween - smallMonthsBetween) * monthSize +
+        additionalOffset;
+    return offset;
   }
 
   @override
@@ -298,15 +389,19 @@ class MonthesBuilder extends CalendarBuilder {
     return Scrollable(
       controller: monthScrollController,
       viewportBuilder: (context, offset) {
-        return Viewport(
-          offset: offset,
-          center: forwardListKey,
-          slivers: [
-            reverseMonthesList(),
-            forwardMonthesList(),
-          ],
-          cacheExtent: 6,
-        );
+        return Builder(builder: (context) {
+          var scrollDate = Provider.of<SearchableDate>(context);
+          offset.correctBy(getNewOffset(scrollDate.date));
+          return Viewport(
+            offset: offset,
+            center: forwardListKey,
+            slivers: [
+              reverseMonthesList(),
+              gapBetweenMonthes(),
+              forwardMonthesList(),
+            ],
+          );
+        });
       },
     );
   }
@@ -357,7 +452,14 @@ class YearBuilder extends CalendarBuilder {
     );
   }
 
-  GridView oneMonthBuilder(
+  double getNewOffset(DateTime givenYear) {
+    int yearsBetween = givenYear.year - nowTime.year;
+    const double yearSize = 1293.0;
+    final double offset = yearsBetween * yearSize;
+    return offset;
+  }
+
+  Widget oneMonthBuilder(
       DateTime givenMonth, int firstWeekDay, DateTime? selectedDay) {
     if (selectedDay != null) {
       if (selectedDay.month == givenMonth.month &&
@@ -410,17 +512,20 @@ class YearBuilder extends CalendarBuilder {
         .monthTextTemplate(givenMonth, 14, FontWeight.w700, AppColors.black);
   }
 
-  Column oneMonthTextBuilder(
+  Widget oneMonthTextBuilder(
     DateTime givenMonth,
     int firstWeekDay,
     DateTime? selectedDay,
   ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        monthText(givenMonth),
-        oneMonthBuilder(givenMonth, firstWeekDay, selectedDay)
-      ],
+    return GestureDetector(
+      onTap: () => toggleTab(givenMonth),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          monthText(givenMonth),
+          oneMonthBuilder(givenMonth, firstWeekDay, selectedDay)
+        ],
+      ),
     );
   }
 
@@ -441,12 +546,10 @@ class YearBuilder extends CalendarBuilder {
       children: [
         yearText(givenYear),
         const SizedBox(height: Sizes.calendarHeightBetweenBigMonthes),
-        ...getYearRows(givenYear).map((_) {
-          return Column(
-            children: [
-              _,
-              const SizedBox(height: Sizes.calendarHeightBetweenBigMonthes),
-            ],
+        ...getYearRows(givenYear).map((row) {
+          return SizedBox(
+            height: 200,
+            child: row,
           );
         }),
       ],
@@ -460,6 +563,7 @@ class YearBuilder extends CalendarBuilder {
       DateTime month = DateTime(year, i + 1);
       DateTime nextMonth = DateTime(year, i + 2);
       rows.add(Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: oneMonthTextBuilder(
@@ -483,22 +587,29 @@ class YearBuilder extends CalendarBuilder {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: toggleTab,
-      child: Scrollable(
-        controller: yearScrollController,
-        viewportBuilder: (context, offset) {
-          return Viewport(
-            offset: offset,
-            center: forwardListKey,
-            slivers: [
-              reverseMonthesList(),
-              forwardMonthesList(),
-            ],
-            cacheExtent: 6,
-          );
-        },
-      ),
+    return Scrollable(
+      controller: yearScrollController,
+      viewportBuilder: (context, offset) {
+        var scrollDate = Provider.of<SearchableDate>(context, listen: false);
+        offset.correctBy(getNewOffset(scrollDate.date));
+        return Viewport(
+          offset: offset,
+          center: forwardListKey,
+          slivers: [
+            reverseMonthesList(),
+            forwardMonthesList(),
+          ],
+        );
+      },
     );
+  }
+}
+
+class SearchableDate extends ChangeNotifier {
+  DateTime _date = DateTime.now();
+  DateTime get date => _date;
+  set date(DateTime date) {
+    _date = date;
+    notifyListeners();
   }
 }
