@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import 'screens/calendar/calendar_screen.dart';
 import 'screens/main_screen/main_screen.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() {
   runApp(const MainApp());
@@ -19,6 +20,8 @@ class MainApp extends StatelessWidget {
         Stream<DateTime>.periodic(const Duration(seconds: 1), (_) {
       return DateTime.now();
     });
+
+    initializeDateFormatting();
 
     return MultiProvider(
       providers: [

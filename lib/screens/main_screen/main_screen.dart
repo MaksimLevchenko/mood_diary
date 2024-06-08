@@ -30,7 +30,7 @@ class _MainScreenState extends State<MainScreen> {
 
   String _getCurrentFormattedDate() {
     DateTime currentDate = Provider.of<DateTime>(context);
-    DateFormat formatter = DateFormat('d MMMM HH:mm');
+    DateFormat formatter = DateFormat('d MMMM HH:mm', 'ru');
     String formattedDate = formatter.format(currentDate);
     return formattedDate;
   }
@@ -77,7 +77,7 @@ class _MainScreenState extends State<MainScreen> {
         child: Column(children: [
           Center(child: tabSelectWidget()),
           const SizedBox(height: 30),
-          selectedTab == 0 ? const MoodDiaryTab() : const StatisticTab(),
+          selectedTab == 0 ? MoodDiaryTab() : const StatisticTab(),
         ]),
       ),
     );

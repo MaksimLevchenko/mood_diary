@@ -8,9 +8,12 @@ import 'package:provider/provider.dart';
 import 'mood_diary_widgets/dual_color_slider.dart';
 import 'mood_diary_widgets/emotion_tiles.dart';
 import 'mood_diary_widgets/mood_tiles.dart';
+import 'mood_diary_widgets/notes_text_field.dart';
+import 'mood_diary_widgets/save_button.dart';
 
 class MoodDiaryTab extends StatelessWidget {
-  const MoodDiaryTab({super.key});
+  MoodDiaryTab({super.key});
+  final TextEditingController notesController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -47,16 +50,14 @@ class MoodDiaryTab extends StatelessWidget {
             const SizedBox(height: Sizes.distanceBetweenElements),
             notesText(),
             const SizedBox(height: Sizes.distanceInElement),
-            notesTextField(context),
+            NotesTextField(notesController: notesController),
+            const SizedBox(height: 16),
+            const Center(child: SaveButton()),
             const SizedBox(height: 16),
           ],
         ),
       ),
     );
-  }
-
-  Widget saveButton() {
-    return const Placeholder();
   }
 
   Text whatDoYouFeelText() => Text(
@@ -109,52 +110,13 @@ class MoodDiaryTab extends StatelessWidget {
 
   Widget selfAssumingSlider(BuildContext context) {
     final personMood = Provider.of<PersonMood>(context);
-    onChanged(value) => personMood.selfAssessment = value;
+    onChanged(value) => personMood.selfAssessmentLevel = value;
 
     return DualColorSlider(
       context: context,
-      getValue: () => personMood.selfAssessment,
+      getValue: () => personMood.selfAssessmentLevel,
       onChanged: onChanged,
       edgeNames: const ['Неуверенность', 'Уверенность'],
-    );
-  }
-
-  Widget notesTextField(BuildContext context) {
-    TextEditingController textEditingController =
-        TextEditingController(text: Provider.of<PersonMood>(context).notes);
-    return ConstrainedBox(
-      constraints:
-          const BoxConstraints.expand(height: Sizes.notesTextFieldHeight),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [AppColors.shadow],
-          borderRadius: BorderRadius.circular(Sizes.notesTextFieldRadius),
-        ),
-        child: TextField(
-          controller: textEditingController,
-          decoration: InputDecoration(
-            hintText: 'Введите заметку',
-            hintStyle: GoogleFonts.nunito(
-              color: AppColors.gray2,
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-            ),
-            contentPadding: const EdgeInsets.all(10),
-            border: InputBorder.none,
-          ),
-          keyboardType: TextInputType.text,
-          maxLines: null,
-          style: GoogleFonts.nunito(
-            color: AppColors.black,
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
-          ),
-          onChanged: (value) {
-            Provider.of<PersonMood>(context, listen: false).notes = value;
-          },
-        ),
-      ),
     );
   }
 }

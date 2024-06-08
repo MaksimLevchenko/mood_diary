@@ -14,4 +14,5 @@ class Sizes {
   static const sliderBoxSticksSize = Size(2, 8);
   static const notesTextFieldRadius = 13.0;
   static const notesTextFieldHeight = 90.0;
+  static const buttonWidth = 335.0;
 }

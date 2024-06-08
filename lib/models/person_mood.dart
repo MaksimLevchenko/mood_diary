@@ -5,27 +5,27 @@ class PersonMood extends ChangeNotifier {
   static List<Mood> moods = [
     Mood(
       imagePath: AppImages.happinessImagePath,
-      title: 'Hapiness',
+      title: 'Радость',
     ),
     Mood(
       imagePath: AppImages.fearImagePath,
-      title: 'Fear',
+      title: 'Страх',
     ),
     Mood(
       imagePath: AppImages.madnessImagePath,
-      title: 'Madness',
+      title: 'Бешенство',
     ),
     Mood(
       imagePath: AppImages.sadnessImagePath,
-      title: 'Sadness',
+      title: 'Грусть',
     ),
     Mood(
       imagePath: AppImages.calmnessImagePath,
-      title: 'Calmness',
+      title: 'Спокойствие',
     ),
     Mood(
       imagePath: AppImages.powerImagePath,
-      title: 'Powerful',
+      title: 'Сила',
     ),
   ];
 
@@ -59,9 +59,14 @@ class PersonMood extends ChangeNotifier {
 
   double stressLevel = 0.5;
 
-  double selfAssessment = 0.5;
+  double selfAssessmentLevel = 0.5;
 
-  String? notes;
+  String _notes = '';
+  String get notes => _notes;
+  set notes(String value) {
+    _notes = value;
+    notifyListeners();
+  }
 }
 
 class Mood {
