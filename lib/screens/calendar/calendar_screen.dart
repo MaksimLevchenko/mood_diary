@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mood_diary/app_style/colors.dart';
 import 'package:intl/intl.dart';
@@ -152,23 +151,6 @@ class MonthesBuilder extends CalendarBuilder {
   final Key forwardListKey = UniqueKey();
   final ScrollController monthScrollController = ScrollController();
 
-  Scrollable bigMonthesViewer() {
-    return Scrollable(
-      controller: monthScrollController,
-      viewportBuilder: (context, offset) {
-        return Viewport(
-          offset: offset,
-          center: forwardListKey,
-          slivers: [
-            reverseMonthesList(),
-            forwardMonthesList(),
-          ],
-          cacheExtent: 6,
-        );
-      },
-    );
-  }
-
   Widget forwardMonthesList() {
     return SliverList(
       delegate: SliverChildBuilderDelegate((context, index) {
@@ -176,7 +158,7 @@ class MonthesBuilder extends CalendarBuilder {
         return Column(
           children: [
             oneMonthWithTextBuilder(context, givenMonth),
-            const SizedBox(height: Sizes.calendarHeightBetweenMonth),
+            const SizedBox(height: Sizes.calendarHeightBetweenBigMonthes),
           ],
         );
       }),
@@ -191,7 +173,7 @@ class MonthesBuilder extends CalendarBuilder {
         return Column(
           children: [
             oneMonthWithTextBuilder(context, givenMonth),
-            const SizedBox(height: Sizes.calendarHeightBetweenMonth),
+            const SizedBox(height: Sizes.calendarHeightBetweenBigMonthes),
           ],
         );
       }),
@@ -313,16 +295,133 @@ class MonthesBuilder extends CalendarBuilder {
 
   @override
   Widget build(BuildContext context) {
-    return bigMonthesViewer();
+    return Scrollable(
+      controller: monthScrollController,
+      viewportBuilder: (context, offset) {
+        return Viewport(
+          offset: offset,
+          center: forwardListKey,
+          slivers: [
+            reverseMonthesList(),
+            forwardMonthesList(),
+          ],
+          cacheExtent: 6,
+        );
+      },
+    );
   }
 }
 
 class YearBuilder extends CalendarBuilder {
   YearBuilder({super.key, required super.toggleTab});
+  final forwardListKey = UniqueKey();
+  final yearScrollController = ScrollController();
 
   @override
   void goToToday() {
-    throw UnimplementedError();
+    yearScrollController.animateTo(
+      0,
+      duration: Durations.short4,
+      curve: Curves.easeInOut,
+    );
+  }
+
+  Widget forwardMonthesList() {
+    return SliverList(
+      delegate: SliverChildBuilderDelegate((context, index) {
+        DateTime givenYear = DateTime(
+          nowTime.year + index,
+        );
+        return Column(
+          children: [
+            oneYearBuilder(givenYear),
+            const SizedBox(height: Sizes.calendarHeightBetweenBigMonthes),
+          ],
+        );
+      }),
+      key: forwardListKey,
+    );
+  }
+
+  Widget reverseMonthesList() {
+    return SliverList(
+      delegate: SliverChildBuilderDelegate((context, index) {
+        DateTime givenYear = DateTime(nowTime.year - 1 - index);
+        return Column(
+          children: [
+            oneYearBuilder(givenYear),
+            const SizedBox(height: Sizes.calendarHeightBetweenBigMonthes),
+          ],
+        );
+      }),
+    );
+  }
+
+  GridView oneMonthBuilder(
+      DateTime givenMonth, int firstWeekDay, DateTime? selectedDay) {
+    if (selectedDay != null) {
+      if (selectedDay.month == givenMonth.month &&
+          selectedDay.year == givenMonth.year) {
+        selectedDay = selectedDay;
+      } else {
+        selectedDay = null;
+      }
+    }
+    return GridView.builder(
+      shrinkWrap: true,
+      itemCount: getDaysInMonth(givenMonth) + firstWeekDay,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 7,
+      ),
+      itemBuilder: (context, index) {
+        bool isSelected = false;
+        if (selectedDay != null) {
+          isSelected = index + 1 == selectedDay.day + firstWeekDay;
+        }
+        return Container(
+          width: 17.21,
+          height: 17.21,
+          decoration: BoxDecoration(
+            color:
+                isSelected ? AppColors.calendarTangerine : Colors.transparent,
+            shape: BoxShape.circle,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                '${(index + 1 - firstWeekDay) > 0 ? (index + 1 - firstWeekDay) : ''}',
+                style: GoogleFonts.nunito(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.black,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  monthText(DateTime givenMonth) {
+    return super
+        .monthTextTemplate(givenMonth, 14, FontWeight.w700, AppColors.black);
+  }
+
+  Column oneMonthTextBuilder(
+    DateTime givenMonth,
+    int firstWeekDay,
+    DateTime? selectedDay,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        monthText(givenMonth),
+        oneMonthBuilder(givenMonth, firstWeekDay, selectedDay)
+      ],
+    );
   }
 
   @override
@@ -337,6 +436,46 @@ class YearBuilder extends CalendarBuilder {
     );
   }
 
+  oneYearBuilder(DateTime givenYear) {
+    return Column(
+      children: [
+        yearText(givenYear),
+        const SizedBox(height: Sizes.calendarHeightBetweenBigMonthes),
+        ...getYearRows(givenYear).map((_) {
+          return Column(
+            children: [
+              _,
+              const SizedBox(height: Sizes.calendarHeightBetweenBigMonthes),
+            ],
+          );
+        }),
+      ],
+    );
+  }
+
+  List<Row> getYearRows(DateTime givenYear) {
+    List<Row> rows = [];
+    int year = givenYear.year;
+    for (int i = 0; i < 12; i += 2) {
+      DateTime month = DateTime(year, i + 1);
+      DateTime nextMonth = DateTime(year, i + 2);
+      rows.add(Row(
+        children: [
+          Expanded(
+            child: oneMonthTextBuilder(
+                month, getFirstDayOfMonthWeekday(month) - 1, nowTime),
+          ),
+          const SizedBox(width: Sizes.calendarGapBetweenSmallMonthes),
+          Expanded(
+            child: oneMonthTextBuilder(
+                nextMonth, getFirstDayOfMonthWeekday(nextMonth) - 1, nowTime),
+          ),
+        ],
+      ));
+    }
+    return rows;
+  }
+
   @override
   Widget appBar() {
     return const SizedBox();
@@ -344,10 +483,22 @@ class YearBuilder extends CalendarBuilder {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        yearText(nowTime),
-      ],
+    return GestureDetector(
+      onTap: toggleTab,
+      child: Scrollable(
+        controller: yearScrollController,
+        viewportBuilder: (context, offset) {
+          return Viewport(
+            offset: offset,
+            center: forwardListKey,
+            slivers: [
+              reverseMonthesList(),
+              forwardMonthesList(),
+            ],
+            cacheExtent: 6,
+          );
+        },
+      ),
     );
   }
 }

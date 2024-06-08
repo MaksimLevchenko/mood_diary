@@ -16,5 +16,6 @@ class Sizes {
   static const notesTextFieldHeight = 90.0;
   static const buttonWidth = 335.0;
   static const calendarActiveDateContainerDiametr = 38.44;
-  static const calendarHeightBetweenMonth = 28.0;
+  static const calendarHeightBetweenBigMonthes = 28.0;
+  static const calendarGapBetweenSmallMonthes = 37.24;
 }
