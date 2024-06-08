@@ -14,4 +14,6 @@ class AppColors {
     spreadRadius: 0,
     color: Color.fromRGBO(182, 161, 192, 0.11),
   );
+
+  static Color calendarTangerine = const Color.fromRGBO(255, 135, 2, 0.25);
 }

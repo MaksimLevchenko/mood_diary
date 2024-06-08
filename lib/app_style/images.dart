@@ -9,4 +9,5 @@ class AppImages {
   static String calendarIconPath = 'assets/icons/my_sessions.png';
   static String diaryIconPath = 'assets/icons/diary.png';
   static String statisticIconPath = 'assets/icons/statistic.png';
+  static String unionIconPath = 'assets/icons/union.png';
 }
