@@ -58,20 +58,13 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _goToCalendar() {
-    return;
+    Navigator.of(context).pushNamed('/calendar');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: _titleClock(),
-        centerTitle: true,
-        actions: [calendarButton()],
-        surfaceTintColor: Colors.transparent,
-        scrolledUnderElevation: 0,
-        forceMaterialTransparency: true,
-      ),
+      appBar: appBar(),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(children: [
@@ -80,6 +73,17 @@ class _MainScreenState extends State<MainScreen> {
           selectedTab == 0 ? MoodDiaryTab() : const StatisticTab(),
         ]),
       ),
+    );
+  }
+
+  AppBar appBar() {
+    return AppBar(
+      title: _titleClock(),
+      centerTitle: true,
+      actions: [calendarButton()],
+      surfaceTintColor: Colors.transparent,
+      scrolledUnderElevation: 0,
+      forceMaterialTransparency: true,
     );
   }
 
