@@ -6,7 +6,7 @@ import 'package:mood_diary/app_style/images.dart';
 import 'package:mood_diary/app_style/utils.dart';
 import 'package:mood_diary/screens/main_screen/tabs/mood_diary.dart';
 import 'package:mood_diary/screens/main_screen/tabs/statistic.dart';
-import 'package:mood_diary/widgets/tab_slider.dart';
+import 'package:mood_diary/widgets/tab_buttons.dart';
 import 'package:provider/provider.dart';
 
 class MainScreen extends StatefulWidget {
@@ -18,11 +18,11 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   GlobalKey tabBarKey = GlobalKey();
-  List<String> tabsNames = [
+  final List<String> tabsNames = [
     'Дневник настроения',
     'Статистика',
   ];
-  List<String> tabsIcons = [
+  final List<String> tabsIcons = [
     AppImages.diaryIconPath,
     AppImages.statisticIconPath,
   ];
@@ -73,15 +73,15 @@ class _MainScreenState extends State<MainScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(children: [
           Center(child: tabSelectWidget()),
-          const SizedBox(height: 36),
-          selectedTab == 0 ? MoodDiaryTab() : StatisticTab(),
+          const SizedBox(height: 30),
+          selectedTab == 0 ? const MoodDiaryTab() : const StatisticTab(),
         ]),
       ),
     );
   }
 
   Widget tabSelectWidget({GlobalKey? key}) {
-    return TabSlider(
+    return TabButtons(
       buttonIcons: tabsIcons,
       buttonNames: tabsNames,
       selectedTab: selectedTab,

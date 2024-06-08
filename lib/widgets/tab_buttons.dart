@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class TabSlider extends StatelessWidget {
-  const TabSlider({
+class TabButtons extends StatelessWidget {
+  const TabButtons({
     super.key,
     required this.buttonNames,
     required this.buttonIcons,

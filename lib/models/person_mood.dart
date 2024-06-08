@@ -57,12 +57,7 @@ class PersonMood extends ChangeNotifier {
     notifyListeners();
   }
 
-  double _stressLevel = 0.5;
-  double get stressLevel => _stressLevel;
-  set stressLevel(double value) {
-    _stressLevel = value;
-    // notifyListeners();
-  }
+  double stressLevel = 0.5;
 
   double selfAssessment = 0.5;
 
