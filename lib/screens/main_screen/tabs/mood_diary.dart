@@ -13,39 +13,47 @@ class MoodDiaryTab extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isMoodSelected =
         Provider.of<PersonMood>(context).pickedMoodIndex != null;
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          whatDoYouFeelText(),
-          const SizedBox(height: Sizes.distanceInElement),
-          SizedBox(
-            height: Sizes.moodBoxSize.height,
-            child: OverflowBox(
-              maxWidth: MediaQuery.of(context).size.width,
-              maxHeight: Sizes.moodBoxSize.height,
-              child: moodsListView(context),
+    return Expanded(
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            whatDoYouFeelText(),
+            const SizedBox(height: Sizes.distanceInElement),
+            SizedBox(
+              height: Sizes.moodBoxSize.height,
+              child: OverflowBox(
+                maxWidth: MediaQuery.of(context).size.width,
+                maxHeight: Sizes.moodBoxSize.height,
+                child: moodsListView(context),
+              ),
             ),
-          ),
-          isMoodSelected
-              ? const SizedBox(height: Sizes.distanceInElement)
-              : const SizedBox(),
-          isMoodSelected ? emotionsSelection(context) : const SizedBox(),
-          const SizedBox(height: Sizes.distanceBetweenElements),
-          stressLevelText(),
-          const SizedBox(height: Sizes.distanceInElement),
-          stressSlider(context),
-          const SizedBox(height: Sizes.distanceBetweenElements),
-          selfAssumingText(),
-          const SizedBox(height: Sizes.distanceInElement),
-          selfAssumingSlider(context),
-          const SizedBox(height: Sizes.distanceBetweenElements),
-          notesText(),
-          const SizedBox(height: Sizes.distanceInElement),
-        ],
+            isMoodSelected
+                ? const SizedBox(height: Sizes.distanceInElement)
+                : const SizedBox(),
+            isMoodSelected ? emotionsSelection(context) : const SizedBox(),
+            const SizedBox(height: Sizes.distanceBetweenElements),
+            stressLevelText(),
+            const SizedBox(height: Sizes.distanceInElement),
+            stressSlider(context),
+            const SizedBox(height: Sizes.distanceBetweenElements),
+            selfAssumingText(),
+            const SizedBox(height: Sizes.distanceInElement),
+            selfAssumingSlider(context),
+            const SizedBox(height: Sizes.distanceBetweenElements),
+            notesText(),
+            const SizedBox(height: Sizes.distanceInElement),
+            notesTextField(context),
+            const SizedBox(height: 16),
+          ],
+        ),
       ),
     );
+  }
+
+  Widget saveButton() {
+    return const Placeholder();
   }
 
   Text whatDoYouFeelText() => Text(
@@ -68,9 +76,7 @@ class MoodDiaryTab extends StatelessWidget {
 
   Widget stressSlider(BuildContext context) {
     final personMood = Provider.of<PersonMood>(context);
-    onChanged(value) {
-      personMood.stressLevel = value;
-    }
+    onChanged(value) => personMood.stressLevel = value;
 
     return sliderBlockBuilder(context, () => personMood.stressLevel, onChanged,
         ['Низкий', 'Высокий']);
@@ -96,12 +102,49 @@ class MoodDiaryTab extends StatelessWidget {
 
   Widget selfAssumingSlider(BuildContext context) {
     final personMood = Provider.of<PersonMood>(context);
-    onChanged(value) {
-      personMood.selfAssessment = value;
-    }
+    onChanged(value) => personMood.selfAssessment = value;
 
     return sliderBlockBuilder(context, () => personMood.selfAssessment,
         onChanged, ['Неуверенность', 'Уверенность']);
+  }
+
+  Widget notesTextField(BuildContext context) {
+    TextEditingController textEditingController =
+        TextEditingController(text: Provider.of<PersonMood>(context).notes);
+    return ConstrainedBox(
+      constraints:
+          const BoxConstraints.expand(height: Sizes.notesTextFieldHeight),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [AppColors.shadow],
+          borderRadius: BorderRadius.circular(Sizes.notesTextFieldRadius),
+        ),
+        child: TextField(
+          controller: textEditingController,
+          decoration: InputDecoration(
+            hintText: 'Введите заметку',
+            hintStyle: GoogleFonts.nunito(
+              color: AppColors.gray2,
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+            ),
+            contentPadding: const EdgeInsets.all(10),
+            border: InputBorder.none,
+          ),
+          keyboardType: TextInputType.text,
+          maxLines: null,
+          style: GoogleFonts.nunito(
+            color: AppColors.black,
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+          ),
+          onChanged: (value) {
+            Provider.of<PersonMood>(context, listen: false).notes = value;
+          },
+        ),
+      ),
+    );
   }
 
   Widget sliderBlockBuilder(

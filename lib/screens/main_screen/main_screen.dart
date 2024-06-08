@@ -68,6 +68,9 @@ class _MainScreenState extends State<MainScreen> {
         title: _titleClock(),
         centerTitle: true,
         actions: [calendarButton()],
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        forceMaterialTransparency: true,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
