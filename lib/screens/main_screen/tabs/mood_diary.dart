@@ -245,20 +245,15 @@ class MoodDiaryTab extends StatelessWidget {
     return ListView.separated(
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      itemBuilder: (_, index) {
-        return moodTile(context, index);
-      },
-      separatorBuilder: (_, i) => const SizedBox(
-        width: Sizes.moodBoxSeparatorWidth,
-      ),
+      itemBuilder: moodTile,
+      separatorBuilder: (_, i) =>
+          const SizedBox(width: Sizes.moodBoxSeparatorWidth),
       itemCount: PersonMood.moods.length,
     );
   }
 
   Widget emotionsSelection(BuildContext context) {
-    return Column(
-      children: emotionsTileToRows(context),
-    );
+    return Column(children: emotionsTileToRows(context));
   }
 
   Widget emotionTile(BuildContext context, int index) {
@@ -312,9 +307,7 @@ class MoodDiaryTab extends StatelessWidget {
 
   GestureDetector moodTile(BuildContext context, int index) {
     return GestureDetector(
-      onTap: () {
-        onMoodChoose(context, index);
-      },
+      onTap: () => onMoodChoose(context, index),
       child: Container(
           constraints: BoxConstraints.loose(Sizes.moodBoxSize),
           decoration: BoxDecoration(
