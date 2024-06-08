@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:mood_diary/app_style/images.dart';
 
@@ -59,9 +57,14 @@ class PersonMood extends ChangeNotifier {
     notifyListeners();
   }
 
-  Double? stressLevel;
+  double _stressLevel = 0.5;
+  double get stressLevel => _stressLevel;
+  set stressLevel(double value) {
+    _stressLevel = value;
+    // notifyListeners();
+  }
 
-  double? selfAssessment;
+  double selfAssessment = 0.5;
 
   String? notes;
 }
